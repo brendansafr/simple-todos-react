@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { Meteor } from "meteor/meteor";
+import React, { useState, Fragment } from "react";
 import { useTracker } from "meteor/react-meteor-data";
-import { Task } from "./Task";
 import { TasksCollection } from "/imports/api/TasksCollection";
+import { Task } from "./Task";
 import { TaskForm } from "./TaskForm";
+import { LoginForm } from "./LoginForm";
 
 const toggleChecked = ({ _id, isChecked }) => {
   TasksCollection.update(_id, {
@@ -15,6 +17,7 @@ const toggleChecked = ({ _id, isChecked }) => {
 const deleteTask = ({ _id }) => TasksCollection.remove(_id);
 
 export const App = () => {
+  const user = useTracker(() => Meteor.user());
   const [hideCompleted, setHideCompleted] = useState(false);
 
   const hideCompletedFilter = { isChecked: { $ne: true } };
@@ -47,24 +50,30 @@ export const App = () => {
       </header>
 
       <div className="main">
-        <TaskForm />
+        {user ? (
+          <Fragment>
+            <TaskForm />
 
-        <div className="filter">
-          <button onClick={() => setHideCompleted(!hideCompleted)}>
-            {hideCompleted ? "Show All" : "Hide Completed"}
-          </button>
-        </div>
+            <div className="filter">
+              <button onClick={() => setHideCompleted(!hideCompleted)}>
+                {hideCompleted ? "Show All" : "Hide Completed"}
+              </button>
+            </div>
 
-        <ul className="tasks">
-          {tasks.map((task) => (
-            <Task
-              key={task._id}
-              task={task}
-              onCheckboxClick={toggleChecked}
-              onDeleteClick={deleteTask}
-            />
-          ))}
-        </ul>
+            <ul className="tasks">
+              {tasks.map((task) => (
+                <Task
+                  key={task._id}
+                  task={task}
+                  onCheckboxClick={toggleChecked}
+                  onDeleteClick={deleteTask}
+                />
+              ))}
+            </ul>
+          </Fragment>
+        ) : (
+          <LoginForm />
+        )}
       </div>
     </div>
   );
