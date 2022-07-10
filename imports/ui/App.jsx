@@ -17,8 +17,12 @@ const deleteTask = ({ _id }) => TasksCollection.remove(_id);
 export const App = () => {
   const [hideCompleted, setHideCompleted] = useState(false);
 
+  const hideCompletedFilter = { isChecked: { $ne: true } };
+
   const tasks = useTracker(() =>
-    TasksCollection.find({}, { sort: { createdAt: -1 } }).fetch()
+    TasksCollection.find(hideCompleted ? hideCompletedFilter : {}, {
+      sort: { createdAt: -1 },
+    }).fetch()
   );
 
   return (
