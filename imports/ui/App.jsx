@@ -1,6 +1,4 @@
 import React from 'react';
-import { Hello } from './Hello.jsx';
-import { Info } from './Info.jsx';
 
 const tasks = [
   {_id: 1, text: 'First Task'},
@@ -11,7 +9,9 @@ const tasks = [
 export const App = () => (
   <div>
     <h1>Welcome to Meteor!</h1>
-    <Hello/>
-    <Info/>
+
+    <ul>
+      { tasks.map(task => <Task key={ task._id } task={ task }/>) }
+    </ul>
   </div>
 );
